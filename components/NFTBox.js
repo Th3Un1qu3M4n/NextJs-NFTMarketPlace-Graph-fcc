@@ -5,7 +5,7 @@ import nftAbi from "../constants/BasicNft.json";
 import Image from "next/image";
 import { Card, useNotification } from "web3uikit";
 import {ethers} from "ethers";
-import UpdateListingModal from "./UpdateListingModal";
+import UpdateListingModal from "./UpdateListingModal.js";
 
 export default function NFTBox({price, nftAddress, tokenId, marketplaceAddress, seller}) {
     const {isWeb3Enabled, account} = useMoralis();

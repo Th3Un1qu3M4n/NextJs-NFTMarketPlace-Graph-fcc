@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import { MoralisProvider } from 'react-moralis'
-import Header from '../components/header'
+import Header from '../components/Header.js'
 import { NotificationProvider } from 'web3uikit'
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
