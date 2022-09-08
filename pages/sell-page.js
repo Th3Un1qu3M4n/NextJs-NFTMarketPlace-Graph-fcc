@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { Button, Form, useNotification } from 'web3uikit'
 import {ethers} from 'ethers'
-import nftAbi from '../constants/BasicNft.json'
+// import nftAbi from '../constants/BasicNft.json'
 import NftMarketplaceAbi from '../constants/NftMarketplace.json'
 import networkMapping from '../constants/networkMapping.json'
 import { useMoralis, useWeb3Contract } from 'react-moralis'
@@ -14,6 +14,7 @@ export default function Home() {
   const marketPlaceAddress = networkMapping[chainIdString].NftMarketplace[0]
   const [proceeds, setProceeds] = useState("0")
   const dispatch = useNotification();
+  let nftAbi;
 
   const { runContractFunction } = useWeb3Contract();
 
@@ -23,6 +24,7 @@ export default function Home() {
     const price = ethers.utils.parseUnits(data.data[2].inputResult, 'ether').toString();
     
     console.log(nftAddress, tokenId, price);
+    nftAbi = await getNftAbi(nftAddress);
 
     const approveOptions = {
       abi: nftAbi,
@@ -116,6 +118,13 @@ export default function Home() {
           setupUI()
       }
   }, [proceeds, account, isWeb3Enabled, chainId])
+
+  async function getNftAbi(nftAddress){
+    const res = await fetch('http://abi.ahmedev.me:5000/getAbi/'+nftAddress)
+    const data = await res.json()
+    // console.log("NFTABi", data)
+    return data;
+  }
 
 
   return (

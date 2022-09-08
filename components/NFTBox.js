@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useMoralis, useWeb3Contract } from "react-moralis";
 import nftMarketplaceAbi from "../constants/NftMarketplace.json"
-import nftAbi from "../constants/BasicNft.json";
+// import nftAbi from "../constants/BasicNft.json";
 import Image from "next/image";
 import { Card, useNotification } from "web3uikit";
 import {ethers} from "ethers";
@@ -16,15 +16,18 @@ export default function NFTBox({price, nftAddress, tokenId, marketplaceAddress, 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const hideModal = () => setIsModalVisible(false);
     const dispatch = useNotification();
+    let nftAbi;
 
-    const {runContractFunction: getTokenUri} = useWeb3Contract({
-        abi: nftAbi,
-        contractAddress: nftAddress,
-        functionName: "tokenURI",
-        params:{
-            tokenId: tokenId
-        }
-    })
+    // const {runContractFunction: getTokenUri} = useWeb3Contract({
+    //     abi: nftAbi1,
+    //     contractAddress: nftAddress,
+    //     functionName: "tokenURI",
+    //     params:{
+    //         tokenId: tokenId
+    //     }
+    // })
+
+    const { runContractFunction } = useWeb3Contract();
 
     const {runContractFunction: buyItem} = useWeb3Contract({
         abi: nftMarketplaceAbi,
@@ -47,22 +50,45 @@ export default function NFTBox({price, nftAddress, tokenId, marketplaceAddress, 
         })
 
     }
+    
 
     async function updateUI(){
-        const tokenURI = await getTokenUri();
-        console.log("tokenUri", tokenURI);
+        console.log("nftAddress:",nftAddress)
+        if(!nftAbi){
+            nftAbi = await getNftAbi(nftAddress)
+        }
+
+
+        const getTokenURIOptions = {
+            abi: nftAbi,
+            contractAddress: nftAddress,
+            functionName: "tokenURI",
+            params:{
+                tokenId: tokenId
+            }
+          }
+      
+        const tokenURI = await runContractFunction({params: getTokenURIOptions})
+
         if(tokenURI){
             const requestUri = tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/");
             const response = await (await fetch(requestUri)).json();
             const imageUri = response.image;
             const imageUri_URL = imageUri.replace("ipfs://", "https://ipfs.io/ipfs/");
-            console.log("imageUri_URL", imageUri_URL);
+            // console.log("imageUri_URL", imageUri_URL);
             setImageUri(imageUri_URL);
             setTokenName(response.name);
             setTokenDesc(response.description);
             setTokenAttributes(response.attributes);
         }
 
+    }
+
+    async function getNftAbi(nftAddress){
+        const res = await fetch('http://abi.ahmedev.me:5000/getAbi/'+nftAddress)
+        const data = await res.json()
+        // console.log("NFTABi", data)
+        return data;
     }
 
     useEffect(() => {
