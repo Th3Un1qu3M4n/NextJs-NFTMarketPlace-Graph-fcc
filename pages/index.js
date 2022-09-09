@@ -29,12 +29,12 @@ export default function Home() {
         !isWeb3Enabled ? 
           <div className='flex-grow text-center font-bold text-slate-500 text-lg'>Please Connect Wallet</div>
           :
-          loading ? <div className='flex-grow text-center font-bold text-slate-500 text-lg'>Loading...</div>
+          loading ? <div className='w-sm flex-grow text-center font-bold text-slate-500 text-lg'>Loading...</div>
             :
               listedNfts.activeItems.length<1 ?
                 <div className='flex-grow text-center font-bold text-slate-500 text-lg'>No NFTs Listed</div>
                 :
-                <div className="flex flex-wrap m-4 gap-2 justify-center">
+                <div className="flex flex-wrap items-stretch m-4 gap-8 justify-center">
                   {listedNfts.activeItems.map((listedNft, index) => {
                     const {price, nftAddress, tokenId, seller} = listedNft;
                     return(

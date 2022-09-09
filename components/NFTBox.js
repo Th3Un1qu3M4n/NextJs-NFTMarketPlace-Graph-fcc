@@ -53,10 +53,11 @@ export default function NFTBox({price, nftAddress, tokenId, marketplaceAddress, 
         console.log("tokenUri", tokenURI);
         if(tokenURI){
             const requestUri = tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/");
+            // console.log(requestUri);
             const response = await (await fetch(requestUri)).json();
             const imageUri = response.image;
             const imageUri_URL = imageUri.replace("ipfs://", "https://ipfs.io/ipfs/");
-            console.log("imageUri_URL", imageUri_URL);
+            // console.log("imageUri_URL", imageUri_URL);
             setImageUri(imageUri_URL);
             setTokenName(response.name);
             setTokenDesc(response.description);
@@ -85,44 +86,53 @@ export default function NFTBox({price, nftAddress, tokenId, marketplaceAddress, 
   return (
     
     <div>
-        { !imageUri ? <div>Loading...</div>
+        { !imageUri ? <div className="max-w-sm">Loading...</div>
             : 
             <>
-            <Card onClick={handleCardClick}>
-                <div className="text-right font-bold px-3">#{tokenId}</div>
-                <div className="text-right italic text-sm px-3">Owned by: {formattedSellerAddress}</div>
-                 <Image
-                    className="lg:h-48 md:h-36 w-full object-contain object-center"
-                    loader={() => imageUri}
-                    src={imageUri}
-                    height={300}
-                    width={300}
-                    alt={tokenName}
-                />
-                <div className="font-bold text-center">
-                    {tokenName}
-                </div>
-                <div className="font-bold text-center">
-                    {tokenDesc}
-                </div>
-                <div className="flex justify-between px-3 mt-2">
-                    
-                    <h2 className="font-bold items-center justify-around">
-                        Attributes:
-                        {tokenAttributes.map((attribute, index) => {
-                            return(
-                                
-                                    <p key={index} className="font-light text-gray-400 px-2 mb-3">{attribute.trait_type} : {attribute.value}</p>
-                                
-                            )
-                        }
-                        )}
-                    </h2>
-                    <div className="font-bold items-center justify-around">
+            {/* <div className="w-100"> */}
+            {/* <Card className="w-100"  > */}
+                <div alt={isOwnedByUser?"Edit Price":"Buy NFT"} className="border border-rounded rounded-lg p-4 bg-gradient-to-tr from-green-100 via-blue-100 to-purple-200 max-w-sm h-full cursor-pointer" onClick={handleCardClick}>
+                    <div className="text-right font-bold px-3">#{tokenId}</div>
+                    <div className="text-right italic text-sm px-3">Owned by: {formattedSellerAddress}</div>
+                    <div className="flex justify-center m-2 p-2">
+                    <Image
+                        className="lg:h-48 md:h-36 self-center object-cover object-center"
+                        loader={() => imageUri}
+                        src={imageUri}
+                        height={300}
+                        width={300}
+                        alt={tokenName}
+                    />
+                    </div>
+                    <div className="font-bold text-center">
+                        {tokenName}
+                    </div>
+                    <div className="flex justify-center m-2 p-2">
+                        <div className="text-ellipsis w-100 font-bold text-center">
+                            {tokenDesc}
+                        </div>
+                    </div>
+                    <div className="font-bold text-right">
                         {ethers.utils.formatUnits(price, 'ether')} ETH
                     </div>
+
+                        
+                        <h2 className="font-bold items-center">
+                            Attributes:
+                            <div className="flex flex-wrap">
+                            {tokenAttributes.map((attribute, index) => {
+                                return(
+                                    
+                                        <span key={index} className="border-2 border-indigo-200 hover:border-none hover:bg-indigo-300 font-light text-gray-400 hover:text-white rounded-md p-3 mx-1 my-3"> <div className="font-bold text-center">{attribute.trait_type} </div> <div className="font-light text-center"> {attribute.value}</div></span>
+                                    
+                                )
+                            }
+                            )}
+                            </div>
+                        </h2>
+                        
                 </div>
-            </Card>
+            {/* </Card> */}
             <UpdateListingModal 
                 isVisible={isModalVisible}
                 nftAddress={nftAddress}
